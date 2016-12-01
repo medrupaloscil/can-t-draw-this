@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <base href="/">
+    <title>Can't Draw This</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
+  </head>
+  <body onload="init()">
+    <div class="drawzone">
+      <canvas id="can" width="700" height="550"></canvas>
+      <img id="canvasimg" style="display:none;">
+      <button onclick="color()" id="erase">Erase</button>
+    </div>
+    <div class="chatzone">
+      <ul id="messages">
+        <li>
+          <h4>Welcome</h4>
+          <p>To the chat</p>
+        </li> 
+      </ul>
+      <input type="text" id="message" placeholder="pseudo">
+      <button onclick="javascript:myWebsocketStart()" id="send">Connect</button>
+    </div>
+  </body>
+</html>
+<script type="text/javascript" src="/resources/js/socket.js"></script>
+<script type="text/javascript" src="/resources/js/canvas.js"></script>

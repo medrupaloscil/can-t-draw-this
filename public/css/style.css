@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+}
+.drawzone {
+  width: 75%;
+  float: left;
+  height: 700px;
+  border-right: 2px solid;
+  background-color: #DDD;
+}
+#messages {
+	height: 600px;
+	overflow: scroll;
+	padding: 0;
+	margin: 5px;
+}
+#messages li {
+	list-style: none;
+    border: 1px solid;
+    text-align: center;
+    margin: 2px;
+    border-radius: 7px;
+}
+#message {
+	width: 100%;
+    margin: 5px;
+    border: 1px solid;
+    font-size: 16px;
+    padding: 2px;
+    display: block;
+}
+#send {
+	display: block;
+    margin: auto;
+    height: 30px;
+    background-color: #FFF;
+    border: 2px solid;
+    font-size: 13px;
+    border-radius: 3px;
+}
+#erase {
+	position: absolute;
+	top: 10%;
+	left: 6%;
+	background-color: #FFF;
+	border: 1px solid;
+	border-radius: 2px;
+}
+canvas {
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	border: 2px solid;
+	background-color: #FFF;
+}
+#canvasimg {
+	position: absolute;
+	top: 10%;
+	left: 52%;
+}
+.chatzone {
+  width: 24%;
+  float: left;
+}
