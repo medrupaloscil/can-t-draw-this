@@ -5,6 +5,7 @@ import (
     "net/http"
     "fmt"
     "sync"
+    "encoding/json"
 )
 
 type msg struct {
@@ -13,12 +14,8 @@ type msg struct {
     Author string
 }
 
-type Message struct {
-    Author string `json:"author"`
-    Body   string `json:"body"`
-}
-
 var clients []websocket.Conn
+var pseudos []string
 var mutex = &sync.Mutex{}
 
 var upgrader = websocket.Upgrader{
@@ -39,8 +36,6 @@ func main() {
           return
         }
 
-        addClient(*conn)
-
         for {
             m := msg{}
 
@@ -50,13 +45,23 @@ func main() {
             } else {
                 switch m.Type {
                 case "connect":
-                    if err = conn.WriteJSON(m); err != nil {
-                        fmt.Println(err)
+                    if stringInSlice(m.Author, pseudos) {
+                        m.Type = "bad_connect";
+                        if err = conn.WriteJSON(m); err != nil {
+                            fmt.Println(err)
+                        }
+                    } else {
+                        addClient(*conn, m.Author)
+                        if err = conn.WriteJSON(m); err != nil {
+                            fmt.Println(err)
+                        }
+                        sendPseudos()
                     }
                 default:
                     for i, v := range clients {
                         if err = v.WriteJSON(m); err != nil {
                             removeClient(i)
+                            sendPseudos()
                         }
                     }
                 }
@@ -68,15 +73,35 @@ func main() {
     http.ListenAndServe(":3001", nil)
 }
 
-func addClient(conn websocket.Conn) {
+func sendPseudos() {
+    jsonPseudo, _ := json.Marshal(pseudos)
+    users := msg{ "users", string(jsonPseudo), "Server" }
+    for _, v := range clients {
+        if err := v.WriteJSON(users); err != nil {
+            fmt.Println(err)
+        }
+    }
+}
+
+func addClient(conn websocket.Conn, pseudo string) {
     mutex.Lock()
     clients = append(clients, conn)
+    pseudos = append(pseudos, pseudo)
     mutex.Unlock()
 }
 
 func removeClient(pos int) {
     mutex.Lock()
     clients = append(clients[:pos], clients[pos+1:]...)
-    print(clients)
+    pseudos = append(pseudos[:pos], pseudos[pos+1:]...)
     mutex.Unlock()
+}
+
+func stringInSlice(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
 }

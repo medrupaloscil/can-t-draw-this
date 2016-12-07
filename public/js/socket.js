@@ -2,6 +2,7 @@ var ws = null;
 var canvas = document.getElementById("can");
 var ctx = canvas.getContext("2d");
 var pseudo = "";
+var ulPseudos = document.getElementById("users");
 
 function myWebsocketStart() {
 
@@ -9,8 +10,6 @@ function myWebsocketStart() {
     if (ws === null) {
       ws = new WebSocket("ws://localhost:3001/websocket");
       pseudo = document.getElementById("message").value;
-      document.getElementById("message").value = "";
-      document.getElementById("send").innerHTML = "Send Message";
 
       ws.onopen = function() {
         ws.send(JSON.stringify({
@@ -25,7 +24,6 @@ function myWebsocketStart() {
 
         switch (data["Type"]) {
           case "message":
-            console.log("message");
             var list = document.getElementById("messages");
             var li = document.createElement("li");
             var p = document.createElement("p");
@@ -37,7 +35,9 @@ function myWebsocketStart() {
             list.appendChild(li);
             break;
           case "connect":
-            console.log("connect");
+            document.getElementById("message").value = "";
+            document.getElementById("send").innerHTML = "Send Message";
+            canvas.style.display = "block";
             var list = document.getElementById("messages");
             var li = document.createElement("li");
             var p = document.createElement("p");
@@ -47,6 +47,11 @@ function myWebsocketStart() {
             li.appendChild(h);
             li.appendChild(p);
             list.appendChild(li);
+            break;
+          case "bad_connect":
+            alert("Pseudo already used");
+            pseudo = "";
+            ws = null;
             break;
           case "canvas":
             var content = JSON.parse(data["Content"]);
@@ -58,8 +63,16 @@ function myWebsocketStart() {
             ctx.stroke();
             ctx.closePath();
             break;
+          case "users":
+            var content = JSON.parse(data["Content"]);
+            var lis = "";
+            for (var i = content.length - 1; i >= 0; i--) {
+              var userPseudo = content[i];
+              lis += "<li style='color: "+getRandomColor()+";'>"+userPseudo+"</li>";
+            };
+            console.log(lis);
+            ulPseudos.innerHTML = lis;
           default:
-            console.log(data);
             break;
         }
       };
@@ -94,4 +107,13 @@ function didDraw(prevX, prevY, currX, currY, x, y) {
           content: datas,
           author: pseudo
         }));
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
