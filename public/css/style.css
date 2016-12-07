@@ -41,7 +41,7 @@ body {
 #erase {
 	position: absolute;
 	top: 10%;
-	left: 6%;
+	left: 16%;
 	background-color: #FFF;
 	border: 1px solid;
 	border-radius: 2px;
@@ -49,14 +49,10 @@ body {
 canvas {
 	position: absolute;
 	top: 10%;
-	left: 10%;
+	left: 20%;
+  cursor: default;
 	border: 2px solid;
 	background-color: #FFF;
-}
-#canvasimg {
-	position: absolute;
-	top: 10%;
-	left: 52%;
 }
 .chatzone {
   width: 24%;

@@ -21,7 +21,7 @@ var canvas, ctx, flag = false,
           findxy('down', e)
       }, false);
       canvas.addEventListener("mouseup", function (e) {
-          findxy('up', e)
+          findxy('up', e);
       }, false);
       canvas.addEventListener("mouseout", function (e) {
           findxy('out', e)
@@ -48,6 +48,7 @@ var canvas, ctx, flag = false,
       ctx.lineWidth = y;
       ctx.stroke();
       ctx.closePath();
+      didDraw(prevX, prevY, currX, currY, x, y);
   }
   
   function findxy(res, e) {

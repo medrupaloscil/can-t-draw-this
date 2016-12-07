@@ -3,11 +3,23 @@ package main
 import (
     "github.com/gorilla/websocket"
     "net/http"
-    "os"
     "fmt"
-    "io/ioutil"
-    "time"
+    "sync"
 )
+
+type msg struct {
+    Type string
+    Content string
+    Author string
+}
+
+type Message struct {
+    Author string `json:"author"`
+    Body   string `json:"body"`
+}
+
+var clients []websocket.Conn
+var mutex = &sync.Mutex{}
 
 var upgrader = websocket.Upgrader{
     ReadBufferSize: 1024,
@@ -18,49 +30,53 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-    indexFile, err := os.Open("public/index.html")
-    if err != nil {
-        fmt.Println(err)
-    }
-    index, err := ioutil.ReadAll(indexFile)
-    if err != nil {
-        fmt.Println(err)
-    }
-
     http.HandleFunc("/websocket", func(w http.ResponseWriter, r *http.Request) {
+        
         conn, err := upgrader.Upgrade(w, r, nil)
+
         if err != nil {
           fmt.Println(err)
           return
         }
 
+        addClient(*conn)
+
         for {
-          msgType, msg, err := conn.ReadMessage()
-          if err != nil {
-            fmt.Println(err)
-            return
-          }
-          if string(msg) == "ping" {
-            time.Sleep(2 * time.Second)
-            err = conn.WriteMessage(msgType, []byte("pong"))
+            m := msg{}
+
+            err := conn.ReadJSON(&m)
             if err != nil {
-              fmt.Println(err)
-              return
+                fmt.Println("Error reading json.", err)
+            } else {
+                switch m.Type {
+                case "connect":
+                    if err = conn.WriteJSON(m); err != nil {
+                        fmt.Println(err)
+                    }
+                default:
+                    for i, v := range clients {
+                        if err = v.WriteJSON(m); err != nil {
+                            removeClient(i)
+                        }
+                    }
+                }
             }
-          } else {
-            print(string(msg))
-            conn.Close()
-            fmt.Println(string(msg))
-            return
-          }
         }
     })
 
-    http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("public"))))
+    print("Server running on 127.0.0.1:3001\n")
+    http.ListenAndServe(":3001", nil)
+}
 
-    http.HandleFunc("/", func(w http.ResponseWriter, r * http.Request) {
-        fmt.Fprintf(w, string(index))
-    })
-    print("Server running on 127.0.0.1:3000\n")
-    http.ListenAndServe(":3000", nil)
+func addClient(conn websocket.Conn) {
+    mutex.Lock()
+    clients = append(clients, conn)
+    mutex.Unlock()
+}
+
+func removeClient(pos int) {
+    mutex.Lock()
+    clients = append(clients[:pos], clients[pos+1:]...)
+    print(clients)
+    mutex.Unlock()
 }
