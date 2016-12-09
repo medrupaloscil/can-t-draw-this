@@ -28,16 +28,13 @@ var canvas, ctx, flag = false,
       }, false);
   }
   
-  function color() {
-      if (x == "white"){
-        document.getElementById("erase").innerHTML = "Erase";
-        x = "black"
-        y = 2;
-      } else {
-        document.getElementById("erase").innerHTML = "Draw";
-        x = "white"
-        y = 14;
-      }
+  function color(color) {
+    x = color;
+    if (color == "white") {
+      y = 20;
+    } else {
+      y = 2;
+    }
   }
   
   function draw() {

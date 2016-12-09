@@ -17,7 +17,7 @@ type msg struct {
 
 var clients []websocket.Conn
 var pseudos []string
-var mutex = &sync.Mutex{}
+var mutex sync.Mutex
 
 var upgrader = websocket.Upgrader{
     ReadBufferSize: 1024,
@@ -59,6 +59,15 @@ func main() {
                     for i, v := range pseudos {
                         if v == m.To {
                             sendMessage(clients[i], m)
+                        }
+                    }
+                case "nick":
+                    for i, v := range pseudos {
+                        if v == m.To {
+                            pseudos[i] = m.Author
+                            sendPseudos()
+                            m = msg{ "message", "now know as " + m.Author, m.To, "all" }
+                            sendMessageToAll(m)
                         }
                     }
                 default:

@@ -31,8 +31,10 @@ function myWebsocketStart() {
             var split = content.split(" ");
             if (split[0] == "/color") {
               p.className = split[1];
+              content = content.replace(split[0] + " " + split[1], "");
+            } else if (split[0] == "/private") {
+              content = content.replace(split[0] + " " + split[1], "");
             }
-            content = content.replace(split[0] + " " + split[1], "");
             p.innerHTML = content;
             var h = document.createElement("h4");
             h.innerHTML = data["Author"];
@@ -50,7 +52,7 @@ function myWebsocketStart() {
             content = content.replace(split[0] + " " + split[1], "");
             p.innerHTML = content;
             var h = document.createElement("h4");
-            h.innerHTML = data["Author"];
+            h.innerHTML = data["Author"] + "->" + data["To"];
             li.appendChild(h);
             li.appendChild(p);
             list.appendChild(li);
@@ -105,15 +107,21 @@ function myWebsocketStart() {
       var msg = document.getElementById("message");
       var value = msg.value;
       var type = "message";
+      var to = "";
       var split = value.split(" ");
       if (split[0] == "/private") {
         type = "private";
+        to = split[1];
+      } else if (split[0] == "/nick") {
+        type = "nick";
+        to = pseudo;
+        pseudo = split[1];
       }
       ws.send(JSON.stringify({
           type: type,
           content: value,
           author: pseudo,
-          to: split[1]
+          to: to
         }));
       msg.value = "";
     }

@@ -49,13 +49,44 @@ body {
     font-size: 13px;
     border-radius: 3px;
 }
-#erase {
+.color {
 	position: absolute;
-	top: 10%;
 	left: 21%;
-	background-color: #FFF;
 	border: 1px solid;
-	border-radius: 2px;
+  height: 15px;
+  width: 15px;
+}
+.color.erase {
+  top: 10%;
+  background-color: #FFF;
+}
+.color.black {
+  background-color: #000;
+  top: 15%;
+}
+.color.red {
+  background-color: red;
+  top: 20%;
+}
+.color.green {
+  background-color: green;
+  top: 25%;
+}
+.color.blue {
+  background-color: blue;
+  top: 30%;
+}
+.color.yellow {
+  background-color: yellow;
+  top: 35%;
+}
+.color.brown {
+  background-color: brown;
+  top: 40%;
+}
+.color.orange {
+  background-color: orange;
+  top: 45%;
 }
 canvas {
   display: none;
