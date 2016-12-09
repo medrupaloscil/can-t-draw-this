@@ -27,7 +27,28 @@ function myWebsocketStart() {
             var list = document.getElementById("messages");
             var li = document.createElement("li");
             var p = document.createElement("p");
-            p.innerHTML = data["Content"];
+            var content = data["Content"];
+            var split = content.split(" ");
+            if (split[0] == "/color") {
+              p.className = split[1];
+            }
+            content = content.replace(split[0] + " " + split[1], "");
+            p.innerHTML = content;
+            var h = document.createElement("h4");
+            h.innerHTML = data["Author"];
+            li.appendChild(h);
+            li.appendChild(p);
+            list.appendChild(li);
+            break;
+          case "private":
+            var list = document.getElementById("messages");
+            var li = document.createElement("li");
+            var p = document.createElement("p");
+            li.className = "private";
+            var content = data["Content"];
+            var split = content.split(" ");
+            content = content.replace(split[0] + " " + split[1], "");
+            p.innerHTML = content;
             var h = document.createElement("h4");
             h.innerHTML = data["Author"];
             li.appendChild(h);
@@ -70,7 +91,6 @@ function myWebsocketStart() {
               var userPseudo = content[i];
               lis += "<li style='color: "+getRandomColor()+";'>"+userPseudo+"</li>";
             };
-            console.log(lis);
             ulPseudos.innerHTML = lis;
           default:
             break;
@@ -83,10 +103,17 @@ function myWebsocketStart() {
       };
     } else {
       var msg = document.getElementById("message");
+      var value = msg.value;
+      var type = "message";
+      var split = value.split(" ");
+      if (split[0] == "/private") {
+        type = "private";
+      }
       ws.send(JSON.stringify({
-          type: "message",
-          content: msg.value,
-          author: pseudo
+          type: type,
+          content: value,
+          author: pseudo,
+          to: split[1]
         }));
       msg.value = "";
     }

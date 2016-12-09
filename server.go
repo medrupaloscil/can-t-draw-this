@@ -12,6 +12,7 @@ type msg struct {
     Type string
     Content string
     Author string
+    To string
 }
 
 var clients []websocket.Conn
@@ -28,42 +29,40 @@ var upgrader = websocket.Upgrader{
 
 func main() {
     http.HandleFunc("/websocket", func(w http.ResponseWriter, r *http.Request) {
-        
+        name := ""
         conn, err := upgrader.Upgrade(w, r, nil)
-
         if err != nil {
           fmt.Println(err)
           return
         }
-
         for {
             m := msg{}
-
             err := conn.ReadJSON(&m)
             if err != nil {
-                fmt.Println("Error reading json.", err)
+                removeClient(name)
+                sendPseudos()
+                return
             } else {
                 switch m.Type {
                 case "connect":
                     if stringInSlice(m.Author, pseudos) {
                         m.Type = "bad_connect";
-                        if err = conn.WriteJSON(m); err != nil {
-                            fmt.Println(err)
-                        }
+                        sendMessage(*conn, m)
                     } else {
                         addClient(*conn, m.Author)
-                        if err = conn.WriteJSON(m); err != nil {
-                            fmt.Println(err)
-                        }
+                        name = m.Author
+                        sendMessage(*conn, m)
                         sendPseudos()
                     }
-                default:
-                    for i, v := range clients {
-                        if err = v.WriteJSON(m); err != nil {
-                            removeClient(i)
-                            sendPseudos()
+                case "private":
+                    sendMessage(*conn, m)
+                    for i, v := range pseudos {
+                        if v == m.To {
+                            sendMessage(clients[i], m)
                         }
                     }
+                default:
+                    sendMessageToAll(m)
                 }
             }
         }
@@ -73,27 +72,43 @@ func main() {
     http.ListenAndServe(":3001", nil)
 }
 
-func sendPseudos() {
-    jsonPseudo, _ := json.Marshal(pseudos)
-    users := msg{ "users", string(jsonPseudo), "Server" }
+func sendMessageToAll(m msg) {
     for _, v := range clients {
-        if err := v.WriteJSON(users); err != nil {
-            fmt.Println(err)
+        if err := v.WriteJSON(m); err != nil {
+            sendPseudos()
         }
     }
 }
 
-func addClient(conn websocket.Conn, pseudo string) {
+func sendMessage(conn websocket.Conn, m msg) {
+    if err := conn.WriteJSON(m); err != nil {
+        fmt.Println(err)
+    }
+}
+
+func sendPseudos() {
+    jsonPseudo, _ := json.Marshal(pseudos)
+    users := msg{ "users", string(jsonPseudo), "Server", "all" }
+    sendMessageToAll(users)
+}
+
+func addClient(conn websocket.Conn, pseudo string) int {
     mutex.Lock()
+    length := len(clients)
     clients = append(clients, conn)
     pseudos = append(pseudos, pseudo)
     mutex.Unlock()
+    return length
 }
 
-func removeClient(pos int) {
+func removeClient(name string) {
     mutex.Lock()
-    clients = append(clients[:pos], clients[pos+1:]...)
-    pseudos = append(pseudos[:pos], pseudos[pos+1:]...)
+    for i, v := range pseudos {
+        if v == name {
+            clients = append(clients[:i], clients[i+1:]...)
+            pseudos = append(pseudos[:i], pseudos[i+1:]...)
+        }
+    }
     mutex.Unlock()
 }
 

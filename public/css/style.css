@@ -28,6 +28,10 @@ body {
     margin: 2px;
     border-radius: 7px;
 }
+#messages li.private {
+  border-color: red;
+  color: red;
+}
 #message {
 	width: 100%;
     margin: 5px;
@@ -65,4 +69,13 @@ canvas {
 .chatzone {
   width: 24%;
   float: left;
+}
+p.blue {
+  color: blue;
+}
+p.red {
+  color: red;
+}
+p.green {
+  color: green;
 }
