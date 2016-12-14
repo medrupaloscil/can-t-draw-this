@@ -6,14 +6,28 @@ body {
   float: left;
   height: 700px;
   border-right: 2px solid;
-  background-color: #FFF;
+  background-color: #282828;
+}
+.users ul {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  overflow: scroll;
+}
+.users ul::-webkit-scrollbar { 
+  display: none; 
+}
+.users ul li {
+  color: #FFF;
+  text-align: center;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 .drawzone {
   width: 60%;
   float: left;
   height: 700px;
   border-right: 2px solid;
-  background-color: #DDD;
 }
 #messages {
 	height: 600px;
@@ -21,33 +35,46 @@ body {
 	padding: 0;
 	margin: 5px;
 }
+#messages::-webkit-scrollbar { 
+  display: none; 
+}
 #messages li {
 	list-style: none;
-    border: 1px solid;
-    text-align: center;
-    margin: 2px;
-    border-radius: 7px;
+  border: 1px solid;
+  text-align: center;
+  margin: 2px;
+  color: #FFF;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#messages li h4 {
+  text-decoration: underline;
+  letter-spacing: 1px;
+  font-size: 18px;
 }
 #messages li.private {
-  border-color: red;
-  color: red;
+  border-color: rgb(213, 39, 39);
+  color: rgb(213, 39, 39);
 }
 #message {
-	width: 100%;
-    margin: 5px;
-    border: 1px solid;
-    font-size: 16px;
-    padding: 2px;
-    display: block;
+	width: 94%;
+  margin: 2%;
+  border: 1px solid;
+  font-size: 16px;
+  padding: 2px;
+  height: 30px;
+  display: block;
 }
 #send {
 	display: block;
-    margin: auto;
-    height: 30px;
-    background-color: #FFF;
-    border: 2px solid;
-    font-size: 13px;
-    border-radius: 3px;
+  margin: auto;
+  height: 40px;
+  background-color: #FFF;
+  border: 2px solid;
+  font-size: 13px;
+  border-radius: 3px;
+  font-weight: bold;
+  padding: 0 20px;
 }
 .color {
 	position: absolute;
@@ -55,38 +82,16 @@ body {
 	border: 1px solid;
   height: 15px;
   width: 15px;
+  display: none;
 }
 .color.erase {
   top: 10%;
   background-color: #FFF;
 }
-.color.black {
-  background-color: #000;
-  top: 15%;
-}
-.color.red {
-  background-color: red;
+.penSize {
   top: 20%;
-}
-.color.green {
-  background-color: green;
-  top: 25%;
-}
-.color.blue {
-  background-color: blue;
-  top: 30%;
-}
-.color.yellow {
-  background-color: yellow;
-  top: 35%;
-}
-.color.brown {
-  background-color: brown;
-  top: 40%;
-}
-.color.orange {
-  background-color: orange;
-  top: 45%;
+  width: 30px;
+  background-color: #FFF;
 }
 canvas {
   display: none;
@@ -98,15 +103,8 @@ canvas {
 	background-color: #FFF;
 }
 .chatzone {
+  height: 700px;
   width: 24%;
   float: left;
-}
-p.blue {
-  color: blue;
-}
-p.red {
-  color: red;
-}
-p.green {
-  color: green;
+  background-color: #282828;
 }

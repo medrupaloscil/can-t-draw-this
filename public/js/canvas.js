@@ -28,13 +28,12 @@ var canvas, ctx, flag = false,
       }, false);
   }
   
-  function color(color) {
-    x = color;
-    if (color == "white") {
-      y = 20;
-    } else {
-      y = 2;
-    }
+  function color() {
+    x = document.getElementById("colorPicker").value;
+  }
+
+  function changeSize() {
+    y = document.getElementById("penSize").value;
   }
   
   function draw() {

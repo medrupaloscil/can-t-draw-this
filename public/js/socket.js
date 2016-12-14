@@ -30,7 +30,7 @@ function myWebsocketStart() {
             var content = data["Content"];
             var split = content.split(" ");
             if (split[0] == "/color") {
-              p.className = split[1];
+              p.style.color = split[1];
               content = content.replace(split[0] + " " + split[1], "");
             } else if (split[0] == "/private") {
               content = content.replace(split[0] + " " + split[1], "");
@@ -59,8 +59,11 @@ function myWebsocketStart() {
             break;
           case "connect":
             document.getElementById("message").value = "";
+            document.getElementById("message").placeholder = "Message...";
             document.getElementById("send").innerHTML = "Send Message";
             canvas.style.display = "block";
+            document.getElementById("colorPicker").style.display = "block";
+            document.getElementById("penSize").style.display = "block";
             var list = document.getElementById("messages");
             var li = document.createElement("li");
             var p = document.createElement("p");
@@ -91,7 +94,7 @@ function myWebsocketStart() {
             var lis = "";
             for (var i = content.length - 1; i >= 0; i--) {
               var userPseudo = content[i];
-              lis += "<li style='color: "+getRandomColor()+";'>"+userPseudo+"</li>";
+              lis += "<li>"+userPseudo+"</li>";
             };
             ulPseudos.innerHTML = lis;
           default:
@@ -142,13 +145,4 @@ function didDraw(prevX, prevY, currX, currY, x, y) {
           content: datas,
           author: pseudo
         }));
-}
-
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
 }
