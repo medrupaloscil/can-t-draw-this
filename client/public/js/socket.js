@@ -8,7 +8,7 @@ function myWebsocketStart() {
 
   if (document.getElementById("message").value != "") {
     if (ws === null) {
-      ws = new WebSocket("ws://localhost:3001/websocket");
+      ws = new WebSocket("ws://" + window.location.href.split("http://")[1].split(":3000/")[0] + ":3001/websocket");
       pseudo = document.getElementById("message").value;
 
       ws.onopen = function() {
