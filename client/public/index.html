@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <base href="/">
+    <title>Can't Draw This</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
+  </head>
+  <body onload="init()">
+    <div class="users">
+      <ul id="users">
+        <li>User list</li>
+      </ul>
+    </div>
+    <div class="drawzone">
+      <canvas id="can" width="550" height="450"></canvas>
+      <input type="color" onchange="color()" id="colorPicker" class="color erase">
+      <input type="number" onchange="changeSize()" id="penSize" class="color penSize" value="2">
+    </div>
+    <div class="chatzone">
+      <ul id="messages">
+      </ul>
+      <input type="text" id="message" placeholder="pseudo">
+      <button onclick="javascript:myWebsocketStart()" id="send">Connect</button>
+    </div>
+  </body>
+</html>
+<script type="text/javascript" src="/resources/js/socket.js"></script>
+<script type="text/javascript" src="/resources/js/canvas.js"></script>
